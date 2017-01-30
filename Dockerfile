@@ -8,6 +8,8 @@ RUN apk add --update dhcp=${DHCPD_VERSION} && \
 
 RUN mkdir -p /srv/dhcpd/var
 
+EXPOSE 67/udp 67/tcp
+
 ENTRYPOINT ["/usr/sbin/dhcpd", \
 			"-cf", "/srv/dhcpd/etc/dhcpd.conf", \
 			"-lf", "/srv/dhcpd/var/dhcpd.leases", \
