@@ -11,7 +11,7 @@ WORKDIR /srv/dhcpd
 
 EXPOSE 67/udp 67/tcp
 
-COPY init.sh /init
-RUN chmod 750 /init
+COPY init.sh /srv/init
+RUN chmod 750 /srv/init
 
-ENTRYPOINT ["/init"]
+ENTRYPOINT ["/srv/init"]

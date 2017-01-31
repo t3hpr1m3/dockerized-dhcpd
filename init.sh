@@ -28,9 +28,27 @@ if [ $gid -ne $gid_actual ] || [ $uid -ne $uid_actual ]; then
 	[ $uid_actual -gt -1 ] && find / -user $uid_actual -exec chown ${DHCPD_USER} {} \;
 fi
 
-exec /usr/sbin/dhcpd \
+termhandler() {
+	kill -TERM "$pid"
+	wait $pid
+	rc=$?
+	if [ $rc -eq 143 ]; then
+		exit 0
+	else
+		exit $rc
+	fi
+}
+
+trap termhandler SIGTERM SIGINT
+
+/usr/sbin/dhcpd \
 	-cf ${DHCPD_ROOT}/etc/dhcpd.conf \
 	-lf ${DHCPD_ROOT}/var/dhcpd.leases \
 	-pf ${DHCPD_ROOT}/var/dhcpd.pid \
 	-user ${DHCPD_USER} \
-	-d -f
+	-d -f "$@" &
+pid="${!}"
+
+set +e
+
+wait $pid
